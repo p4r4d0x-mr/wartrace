@@ -1,0 +1,662 @@
+index.html
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wartrace - Media Pembelajaran Sejarah</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--maroon:#651d26;--wine:#8e2732;--paper:#f5efe2;--ink:#2b2420;--gold:#c59b4b;--line:#dccfb9}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--paper);font-family:"Source Sans 3",sans-serif;color:var(--ink)}
+    .app-wrapper{width:100%;min-height:calc(100 * min(var(--vh,1vh),1vh));overflow:hidden}
+    .display-font{font-family:"Playfair Display",serif}
+    .page-view{display:none;animation:pageIn .35s ease both}
+    .page-view.active{display:block}
+    .hero{position:relative;isolation:isolate;overflow:hidden;background:#281617}
+    .hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(30,11,13,.95),rgba(61,22,25,.72),rgba(45,20,17,.28));z-index:-1}
+    .hero-map{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;filter:sepia(.8) saturate(.68) contrast(1.06)}
+    .paper-card{background:rgba(255,252,244,.92);border:1px solid var(--line);box-shadow:0 12px 28px rgba(65,31,25,.08)}
+    .archive-strip{background:linear-gradient(90deg,#571921,#8d2b34,#571921);color:#fff7e7}
+    .nav-link{position:relative;padding:.55rem .1rem}.nav-link:after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--gold);transition:.22s}.nav-link:hover:after,.nav-link.active:after{width:100%}
+    .gold-rule{width:68px;height:3px;background:var(--gold)}
+    .hover-card{transition:.24s ease}.hover-card:hover{transform:translateY(-5px);box-shadow:0 17px 32px rgba(79,30,32,.16);border-color:#b78b4b}
+    .material-nav{position:sticky;top:64px;z-index:20;background:rgba(245,239,226,.95);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+    .modal-shell{display:none;position:fixed;inset:0;z-index:80;padding:1rem;background:rgba(25,13,14,.75);align-items:center;justify-content:center}
+    .modal-shell.open{display:flex}
+    .timeline-year{border:1px solid #d6c5a9;background:#fffaf4;color:#571921;transition:.2s}
+    .timeline-year:hover,.timeline-year.active{background:#651d26;color:#fff8e8;border-color:#651d26}
+    
+    /* Styling Peta Bergambar & Tombol Pin */
+    .map-board-wrapper{position:relative;overflow:hidden;border:2px solid #9b7542;border-radius:1.5rem;box-shadow:0 12px 28px rgba(0,0,0,.25);background:#2c181a}
+    .map-board-img{width:100%;height:auto;display:block;user-select:none;-webkit-user-drag:none}
+    .map-button{position:absolute;z-index:10;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:5px;border:1.5px solid rgba(255,239,198,.8);background:rgba(96,35,43,.92);color:#fff7e7;border-radius:999px;padding:.4rem .75rem;font-weight:700;font-size:.78rem;box-shadow:0 4px 12px rgba(0,0,0,.35);backdrop-filter:blur(3px);cursor:pointer;transition:.2s ease;white-space:nowrap}
+    .map-button:hover{background:#d3aa56;color:#35191a;transform:translate(-50%,-50%) scale(1.08);box-shadow:0 0 14px rgba(211,170,86,.7)}
+    
+    .sound-bars{display:inline-flex;gap:2px;align-items:flex-end;height:16px}.sound-bars span{width:3px;height:5px;border-radius:3px;background:currentColor}
+    .is-playing .sound-bars span:nth-child(1){animation:bar .5s infinite alternate}.is-playing .sound-bars span:nth-child(2){animation:bar .35s .12s infinite alternate}.is-playing .sound-bars span:nth-child(3){animation:bar .6s .08s infinite alternate}
+    button:focus-visible,a:focus-visible{outline:3px solid #e3bb61;outline-offset:3px}
+    @keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    @keyframes bar{to{height:16px}}
+    @media(max-width:767px){.desktop-nav{display:none}.material-nav{top:64px}.map-button{font-size:.68rem;padding:.3rem .55rem}}
+    @media(min-width:768px){.mobile-toggle,.mobile-menu{display:none}}
+  </style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+</head>
+<body style="background: rgb(245, 239, 226);">
+  <div class="app-wrapper">
+    <header class="sticky top-0 z-40 border-b border-[#8d6d4d] bg-[#2b1517]/95 text-[#fff8e8] backdrop-blur">
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <button type="button" class="flex items-center text-xl font-bold tracking-wider text-[#e6c67d] display-font" onclick="showPage('beranda')" aria-label="Kembali ke beranda">
+          WARTRACE
+        </button>
+        <nav class="desktop-nav" aria-label="Navigasi utama">
+          <div class="flex gap-6 text-sm font-bold tracking-wide">
+            <button class="nav-link active text-[#fff8e8]" data-page-link="beranda" type="button" onclick="showPage('beranda')">BERANDA</button>
+            <button class="nav-link text-[#fff8e8]" data-page-link="profil" type="button" onclick="showPage('profil')">PROFIL</button>
+            <button class="nav-link text-[#fff8e8]" data-page-link="petunjuk" type="button" onclick="showPage('petunjuk')">PETUNJUK</button>
+            <button class="nav-link text-[#fff8e8]" data-page-link="materi" type="button" onclick="showPage('materi')">MATERI</button>
+            <button class="nav-link text-[#fff8e8]" data-page-link="kuis" type="button" onclick="showPage('kuis')">KUIS</button>
+            <button class="nav-link text-[#fff8e8]" data-page-link="referensi" type="button" onclick="showPage('referensi')">REFERENSI</button>
+          </div>
+        </nav>
+        <button id="menu-toggle" type="button" class="mobile-toggle p-2" aria-label="Buka menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+      <nav id="mobile-menu" class="mobile-menu hidden border-t border-white/15 px-5 py-3" aria-label="Navigasi mobile">
+        <div class="grid gap-1 text-sm font-bold">
+          <button class="text-left py-2" type="button" onclick="showPage('beranda');closeMobileMenu()">BERANDA</button>
+          <button class="text-left py-2" type="button" onclick="showPage('profil');closeMobileMenu()">PROFIL</button>
+          <button class="text-left py-2" type="button" onclick="showPage('petunjuk');closeMobileMenu()">PETUNJUK</button>
+          <button class="text-left py-2" type="button" onclick="showPage('materi');closeMobileMenu()">MATERI</button>
+          <button class="text-left py-2" type="button" onclick="showPage('kuis');closeMobileMenu()">KUIS</button>
+          <button class="text-left py-2" type="button" onclick="showPage('referensi');closeMobileMenu()">REFERENSI</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- BERANDA -->
+      <section id="beranda" class="page-view active">
+        <section class="hero py-20 sm:py-28">
+          <img class="hero-map" loading="lazy" src="https://images.pexels.com/photos/14436283/pexels-photo-14436283.jpeg" alt="Peta vintage dengan kaca pembesar">
+          <div class="w-full max-w-7xl mx-auto px-5 sm:px-8">
+            <div class="max-w-3xl">
+              <p class="text-[#e6c67d] font-bold tracking-[.2em] text-xs uppercase">BAHAN AJAR DIGITAL • SEJARAH INDONESIA</p>
+              <h1 class="display-font text-[#fff8e9] font-bold leading-none mt-4 text-4xl sm:text-6xl">PERANG DUNIA II</h1>
+              <p class="text-[#e1bd68] font-bold tracking-[.16em] mt-4 text-xl">1939 — 1945</p>
+              <p class="max-w-2xl text-[#fff4dd] text-xl leading-relaxed mt-5">Enam tahun yang mengubah dunia.</p>
+              <div class="gold-rule mt-8"></div>
+              <p class="max-w-2xl text-[#f7e9cc] text-lg leading-relaxed mt-6">Telusuri sebab, perkembangan, titik balik, dampak, dan hubungan Perang Dunia II dengan sejarah Indonesia melalui bahan ajar interaktif.</p>
+              <div class="flex flex-wrap gap-3 mt-8">
+                <button type="button" class="rounded-full px-6 py-3 font-bold bg-[#651d26] text-[#fff9eb] hover:bg-[#7b202b] transition" onclick="openMaterialSection('cp')">MULAI BELAJAR</button>
+                <button type="button" class="rounded-full px-6 py-3 font-bold border border-[#ddc58d] text-[#fff9eb] hover:bg-[#fff6e2] hover:text-[#571921] transition" onclick="showPage('petunjuk')">PETUNJUK PENGGUNAAN</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- MATERI -->
+      <section id="materi" class="page-view">
+        <div class="archive-strip px-5 py-12 sm:py-16">
+          <div class="w-full max-w-6xl mx-auto">
+            <p class="text-[#ead28f] font-bold tracking-[.18em] text-xs uppercase">PERJALANAN MATERI</p>
+            <h1 class="display-font font-bold mt-3 text-3xl sm:text-4xl text-[#fff7e7]">Materi Perang Dunia II</h1>
+            <p class="max-w-3xl text-[#fff1d8] text-lg mt-4">Pelajari perang secara runtut: dari latar belakang, pecahnya perang, perkembangan global, hingga dampaknya terhadap dunia dan Indonesia.</p>
+          </div>
+        </div>
+
+        <nav class="material-nav overflow-x-auto" aria-label="Navigasi materi">
+          <div class="w-full max-w-6xl mx-auto px-5 py-3 flex gap-5 min-w-max text-sm font-bold text-[#5d2025]">
+            <button type="button" onclick="scrollToSection('cp')">CP &amp; TUJUAN</button>
+            <button type="button" onclick="scrollToSection('latar')">LATAR BELAKANG</button>
+            <button type="button" onclick="scrollToSection('kronologi')">KRONOLOGI</button>
+            <button type="button" onclick="scrollToSection('wilayah')">WILAYAH</button>
+            <button type="button" onclick="scrollToSection('dampak')">DAMPAK</button>
+            <button type="button" onclick="scrollToSection('indonesia')">INDONESIA</button>
+          </div>
+        </nav>
+
+        <div class="w-full max-w-6xl mx-auto px-5 py-12 sm:py-16">
+          <!-- CP & TUJUAN -->
+          <section id="cp" class="paper-card rounded-3xl p-7 sm:p-10">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">CAPAIAN PEMBELAJARAN</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Capaian Pembelajaran Fase F</h2>
+            <p class="leading-relaxed text-[#493b35] mt-4">Pada akhir Fase F, peserta didik mampu menganalisis peristiwa sejarah Indonesia dan dunia dengan menggunakan konsep kronologi, perubahan, keberlanjutan, sebab-akibat, serta keterkaitan antara peristiwa masa lalu dengan kehidupan masa kini.</p>
+            <p class="leading-relaxed text-[#493b35] mt-3">Dalam pembelajaran Perang Dunia II, peserta didik diarahkan untuk menganalisis latar belakang, perkembangan, dan dampak Perang Dunia II serta menghubungkannya dengan perubahan tatanan dunia dan perkembangan sejarah Indonesia.</p>
+          </section>
+
+          <section id="tujuan" class="paper-card rounded-3xl p-7 sm:p-10 mt-5">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">TUJUAN PEMBELAJARAN</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Setelah belajar, peserta didik mampu…</h2>
+            <div class="grid sm:grid-cols-2 gap-4 mt-7">
+              <p class="rounded-xl bg-[#f0e7d5] p-4 text-[#493b35]">1. Menganalisis latar belakang Perang Dunia II.</p>
+              <p class="rounded-xl bg-[#f0e7d5] p-4 text-[#493b35]">2. Menjelaskan perkembangan Perang Dunia II.</p>
+              <p class="rounded-xl bg-[#f0e7d5] p-4 text-[#493b35]">3. Mengidentifikasi tokoh dan wilayah perang.</p>
+              <p class="rounded-xl bg-[#f0e7d5] p-4 text-[#493b35]">4. Menganalisis titik balik Perang Dunia II.</p>
+              <p class="rounded-xl bg-[#f0e7d5] p-4 sm:col-span-2 text-[#493b35]">5. Menganalisis dampak Perang Dunia II bagi dunia dan Indonesia.</p>
+            </div>
+          </section>
+
+          <!-- LATAR BELAKANG -->
+          <section id="latar" class="pt-20">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">01 — LATAR BELAKANG</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Mengapa Perang Dunia II terjadi?</h2>
+            <p class="max-w-4xl text-lg text-[#57463d] mt-4">Perang Dunia II tidak muncul secara tiba-tiba. Konflik ini merupakan hasil dari persoalan politik, ekonomi, ideologi, dan hubungan internasional yang berkembang setelah Perang Dunia I.</p>
+            <div id="factor-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-8"></div>
+            <aside class="paper-card rounded-2xl p-6 mt-7">
+              <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">SUMBER ILMIAH</p>
+              <p class="text-[#57463d] mt-3">Untuk memperdalam pemahaman mengenai latar belakang dan penyebab Perang Dunia II, kamu dapat membaca jurnal berikut.</p>
+              <a class="inline-flex rounded-full bg-[#651d26] text-white px-5 py-3 font-bold mt-5 hover:bg-[#7d242f] transition" href="https://gudangjurnal.com/index.php/gjmi/article/view/494/453" target="_blank" rel="noopener noreferrer">BACA JURNAL</a>
+            </aside>
+          </section>
+
+          <!-- PIHAK TERLIBAT -->
+          <section id="pihak" class="pt-20">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">02 — PIHAK TERLIBAT</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Blok Poros dan Blok Sekutu</h2>
+            <p class="text-[#57463d] mt-3">Klik setiap negara untuk memahami posisi, kepentingan, dan perannya dalam perang.</p>
+            <div class="grid lg:grid-cols-2 gap-6 mt-7">
+              <div class="rounded-3xl bg-[#4b1e24] p-6 text-[#fff8e8]">
+                <h3 class="display-font font-bold text-xl text-[#fff8e8]">BLOK POROS</h3>
+                <div id="axis-grid" class="grid grid-cols-3 gap-3 mt-5"></div>
+              </div>
+              <div class="rounded-3xl bg-[#eadfc9] p-6">
+                <h3 class="display-font text-[#4e171d] font-bold text-xl">BLOK SEKUTU</h3>
+                <div id="allies-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-5"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- PECAHNYA PERANG -->
+          <section id="pecah" class="pt-20">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">03 — PECAHNYA PERANG</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Pecahnya Perang: 1939</h2>
+            <p class="max-w-4xl text-[#57463d] mt-4">Jerman di bawah Adolf Hitler menjalankan politik ekspansi. Serangan ke Polandia menjadi pemicu pecahnya Perang Dunia II di Eropa dan mengubah ketegangan internasional menjadi konflik terbuka.</p>
+            <div class="grid md:grid-cols-3 gap-4 mt-7">
+              <button class="paper-card hover-card rounded-2xl p-6 text-left" type="button" onclick="openModal('1 September 1939','Jerman menyerang Polandia','Adolf Hitler menjalankan politik ekspansi dengan menyerang Polandia pada 1 September 1939. Serangan ini menggunakan strategi blitzkrieg, yaitu serangan cepat dengan kombinasi pesawat, tank, artileri, dan pasukan darat. Invasi tersebut menunjukkan bahwa tuntutan wilayah Jerman telah berubah menjadi agresi terbuka.','calendar-days')">
+                <span class="text-[#9b2d38] font-bold">1 SEPTEMBER 1939</span>
+                <h3 class="display-font text-2xl font-bold text-[#4e171d] mt-3">Invasi Polandia</h3>
+                <p class="text-[#5b493e] mt-2">Klik untuk membaca kronologi awal perang.</p>
+              </button>
+              <div class="flex items-center justify-center text-[#b78a48]"><i data-lucide="arrow-right" class="w-8 h-8"></i></div>
+              <button class="paper-card hover-card rounded-2xl p-6 text-left" type="button" onclick="openModal('3 September 1939','Inggris dan Prancis menyatakan perang','Inggris dan Prancis sebelumnya memberi jaminan keamanan kepada Polandia. Ketika Jerman tidak menghentikan serangan, kedua negara menyatakan perang terhadap Jerman pada 3 September 1939. Peristiwa ini menandai pecahnya Perang Dunia II di Eropa.','megaphone')">
+                <span class="text-[#9b2d38] font-bold">3 SEPTEMBER 1939</span>
+                <h3 class="display-font text-2xl font-bold text-[#4e171d] mt-3">Deklarasi Perang</h3>
+                <p class="text-[#5b493e] mt-2">Klik untuk memahami mengapa perang meluas.</p>
+              </button>
+            </div>
+          </section>
+
+          <!-- KRONOLOGI UTAMA -->
+          <section id="kronologi" class="pt-20">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">04 — KRONOLOGI UTAMA</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Perkembangan Perang Dunia II 1939–1945</h2>
+            <p class="text-[#57463d] mt-3">Pilih tahun untuk membaca perkembangan perang secara kronologis.</p>
+            <div id="year-buttons" class="flex flex-wrap gap-3 mt-7"></div>
+            <article id="timeline-detail" class="paper-card rounded-3xl p-7 sm:p-9 mt-5"></article>
+          </section>
+
+          <!-- TOKOH PENTING -->
+          <section id="tokoh" class="pt-20">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">05 — TOKOH PENTING</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Tokoh dan peran dalam perang</h2>
+            <p class="text-[#59483f] mt-3">Klik kartu tokoh untuk melihat peran, tindakan penting, dan pengaruhnya terhadap jalannya perang.</p>
+            <div id="people-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-7"></div>
+          </section>
+
+          <!-- WILAYAH KONFLIK (PETA BERGAMBAR) -->
+          <section id="wilayah" class="pt-20">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">06 — WILAYAH KONFLIK</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Perang di berbagai wilayah dunia</h2>
+            <p class="text-[#59483f] mt-3">Peta interaktif teater perang dunia. Klik pin wilayah pada peta untuk membaca perkembangan perang di setiap teater operasi.</p>
+            
+            <div class="grid lg:grid-cols-[1.3fr_.7fr] gap-6 mt-7 items-start">
+              <!-- Kotak Peta Gambar Interaktif -->
+              <div class="map-board-wrapper">
+                <img 
+                  src="peta-ww2.jpg" 
+                  alt="Peta Teater Perang Dunia II Vintage" 
+                  class="map-board-img"
+                  onerror="this.onerror=null; this.src='https://images.pexels.com/photos/14436283/pexels-photo-14436283.jpeg';"
+                />
+
+                <!-- Tombol Pin Koordinat Wilayah -->
+                <button class="map-button" style="left: 47%; top: 27%;" type="button" onclick="showRegion('eropa')">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Eropa
+                </button>
+
+                <button class="map-button" style="left: 49%; top: 43%;" type="button" onclick="showRegion('afrika')">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Afrika Utara
+                </button>
+
+                <button class="map-button" style="left: 77%; top: 37%;" type="button" onclick="showRegion('asia')">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Asia Timur
+                </button>
+
+                <button class="map-button" style="left: 86%; top: 47%;" type="button" onclick="showRegion('pasifik')">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Asia-Pasifik
+                </button>
+              </div>
+
+              <!-- Sidebar Detail Wilayah -->
+              <aside class="paper-card rounded-3xl p-7 sticky top-24">
+                <p class="text-[#9a2f39] font-bold tracking-[.15em] text-xs uppercase">Wilayah Terpilih</p>
+                <h3 id="region-title" class="display-font text-3xl text-[#4c171d] font-bold mt-2">Eropa</h3>
+                <p id="region-text" class="text-[#59483f] leading-relaxed mt-4"></p>
+                <button type="button" class="mt-5 rounded-full bg-[#651d26] px-5 py-2 font-bold text-white hover:bg-[#7e242f] transition" onclick="openRegionModal()">Baca Selengkapnya</button>
+              </aside>
+            </div>
+          </section>
+
+          <!-- TITIK BALIK -->
+          <section id="balik" class="pt-20">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">07 — TITIK BALIK PERANG</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Peristiwa yang mengubah keseimbangan kekuatan</h2>
+            <p class="text-[#59483f] mt-3">Ketiga peristiwa berikut penting bukan hanya karena kemenangan militer, tetapi karena mengubah inisiatif perang dari Poros kepada Sekutu.</p>
+            <div id="turning-grid" class="grid md:grid-cols-3 gap-5 mt-7"></div>
+          </section>
+
+          <!-- AKHIR PERANG -->
+          <section id="akhir" class="pt-20">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">08 — AKHIR PERANG</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Akhir Perang Dunia II, 1944–1945</h2>
+            <div class="grid md:grid-cols-2 gap-5 mt-7">
+              <button type="button" class="paper-card hover-card rounded-2xl text-left p-7" onclick="openModal('1944','Pembebasan Eropa Barat','Pendaratan Sekutu di Normandia pada 6 Juni 1944 membuka front besar di Eropa Barat. Sekutu kemudian membebaskan Prancis dan bergerak ke arah Jerman, sementara Uni Soviet terus menekan dari Front Timur. Jerman semakin kehilangan wilayah, personel, dan kemampuan industri.','compass')">
+                <p class="font-bold text-[#982d38]">1944</p>
+                <h3 class="display-font text-2xl font-bold text-[#4e171d] mt-2">Normandia dan tekanan dari dua arah</h3>
+                <p class="text-[#59483f] mt-3">Klik untuk melihat proses kekalahan Jerman.</p>
+              </button>
+              <button type="button" class="paper-card hover-card rounded-2xl text-left p-7" onclick="openModal('1945','Akhir Perang Dunia II','Jerman menyerah pada Mei 1945 sehingga perang di Eropa berakhir. Namun perang berlanjut di Asia-Pasifik. Setelah bom atom dijatuhkan di Hiroshima pada 6 Agustus dan Nagasaki pada 9 Agustus, serta Uni Soviet memasuki perang melawan Jepang, Jepang menerima syarat penyerahan pada 15 Agustus dan menandatangani penyerahan resmi pada 2 September 1945.','flag')">
+                <p class="font-bold text-[#982d38]">1945</p>
+                <h3 class="display-font text-2xl font-bold text-[#4e171d] mt-2">Jerman menyerah, perang Pasifik berakhir</h3>
+                <p class="text-[#59483f] mt-3">Klik untuk membaca hubungan akhir perang di dua kawasan.</p>
+              </button>
+            </div>
+          </section>
+
+          <!-- DAMPAK PERANG -->
+          <section id="dampak" class="pt-20">
+            <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">09 — DAMPAK PERANG</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Dunia setelah perang</h2>
+            <p class="text-[#59483f] mt-3">Perang tidak hanya mengubah peta militer, tetapi juga kehidupan manusia, sistem politik internasional, ekonomi, dan masa depan bangsa-bangsa terjajah.</p>
+            <div id="impact-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-7"></div>
+          </section>
+
+          <!-- KETERKAITAN DENGAN INDONESIA -->
+          <section id="indonesia" class="pt-20">
+            <div class="rounded-3xl overflow-hidden bg-[#4b1e24] text-[#fff8e8] grid md:grid-cols-[.82fr_1.18fr]">
+              <img class="min-h-[280px] h-full w-full object-cover opacity-80" loading="lazy" src="https://images.pexels.com/photos/712418/pexels-photo-712418.jpeg" alt="Ilustrasi arsip bersejarah">
+              <div class="p-8 sm:p-10">
+                <p class="text-[#e6c774] font-bold tracking-[.16em] text-xs uppercase">10 — KETERKAITAN DENGAN INDONESIA</p>
+                <h2 class="display-font font-bold mt-3 text-2xl text-[#fff8e8]">Dari Pendudukan Jepang menuju Proklamasi</h2>
+                <p class="text-[#f1dfbd] leading-relaxed mt-4">Kekalahan Jepang mengubah situasi politik di Indonesia dan membuka peluang bagi bangsa Indonesia untuk mempercepat perjuangan kemerdekaan.</p>
+                <button type="button" class="rounded-full px-6 py-3 font-bold bg-[#e0bc60] text-[#3e191c] mt-7 hover:bg-[#edd084] transition" onclick="openIndonesia()">BACA SELENGKAPNYA</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- KESIMPULAN -->
+          <section id="kesimpulan" class="pt-20">
+            <div class="rounded-3xl bg-[#eadfc9] p-8 sm:p-10">
+              <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">11 — KESIMPULAN</p>
+              <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Memahami perang sebagai rangkaian sebab dan akibat</h2>
+              <p class="max-w-4xl leading-relaxed text-[#493b35] mt-4">Perang Dunia II merupakan hasil dari rangkaian persoalan politik, ekonomi, ideologi, dan hubungan internasional setelah Perang Dunia I. Perang berkembang dari konflik Eropa menjadi perang global, mengalami perubahan keseimbangan kekuatan melalui berbagai titik balik, dan berakhir dengan kekalahan negara-negara Poros pada 1945.</p>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- PROFIL -->
+      <section id="profil" class="page-view py-14 sm:py-20 px-5">
+        <div class="w-full max-w-5xl mx-auto">
+          <header class="text-center rounded-3xl bg-[#4b1e24] p-8 sm:p-10 text-[#fff7e9]">
+            <p class="text-[#e7c775] font-bold tracking-[.18em] uppercase text-xs">IDENTITAS BAHAN AJAR</p>
+            <h1 class="display-font font-bold mt-3 text-3xl sm:text-4xl">WARTRACE</h1>
+            <p class="max-w-3xl mx-auto leading-relaxed mt-5">WARTRACE adalah bahan ajar digital interaktif untuk membantu peserta didik memahami Perang Dunia II secara runtut, kritis, dan kontekstual.</p>
+          </header>
+          <h2 class="display-font text-[#4e171d] font-bold text-center mt-10 text-2xl">Profil Penyusun — Kelompok 5 Offering E</h2>
+          <div class="grid sm:grid-cols-2 gap-4 mt-6">
+            <article class="paper-card rounded-2xl p-5">
+              <h3 class="font-bold text-[#511820] text-lg">Isna Rinda Fanesia</h3>
+              <p class="text-[#66534a] mt-1">250731601600</p>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <h3 class="font-bold text-[#511820] text-lg">Laily Laatukhkhu Zulaiha</h3>
+              <p class="text-[#66534a] mt-1">250731602728</p>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <h3 class="font-bold text-[#511820] text-lg">Nafi'ul Laila Rahma Sabila</h3>
+              <p class="text-[#66534a] mt-1">250731622589</p>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <h3 class="font-bold text-[#511820] text-lg">Tubagus Zekka Attar Ramdhany</h3>
+              <p class="text-[#66534a] mt-1">250731620725</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- PETUNJUK -->
+      <section id="petunjuk" class="page-view py-14 sm:py-20 px-5">
+        <div class="w-full max-w-5xl mx-auto">
+          <p class="text-[#8e2732] font-bold tracking-[.18em] text-xs uppercase text-center">PANDUAN BELAJAR</p>
+          <h1 class="display-font text-[#4e171d] font-bold text-center mt-3 text-3xl sm:text-4xl">Cara Menggunakan Wartrace</h1>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+            <article class="paper-card rounded-2xl p-5">
+              <span class="text-[#b78a48] font-bold">01</span><i data-lucide="home" class="text-[#9b2d38] mt-3"></i>
+              <h2 class="display-font text-xl font-bold text-[#4e171d] mt-3">MULAI DARI BERANDA</h2>
+              <p class="text-[#5b493e] mt-2">Kenali tujuan dan alur belajar WARTRACE.</p>
+              <button class="mt-4 rounded-full bg-[#651d26] px-4 py-2 font-bold text-white text-sm" onclick="showPage('materi')">MULAI BELAJAR</button>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <span class="text-[#b78a48] font-bold">02</span><i data-lucide="book-open" class="text-[#9b2d38] mt-3"></i>
+              <h2 class="display-font text-xl font-bold text-[#4e171d] mt-3">BUKA MATERI</h2>
+              <p class="text-[#5b493e] mt-2">Pelajari Perang Dunia II secara bertahap.</p>
+              <button class="mt-4 rounded-full bg-[#651d26] px-4 py-2 font-bold text-white text-sm" onclick="showPage('materi')">BUKA MATERI</button>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <span class="text-[#b78a48] font-bold">03</span><i data-lucide="mouse-pointer-click" class="text-[#9b2d38] mt-3"></i>
+              <h2 class="display-font text-xl font-bold text-[#4e171d] mt-3">KLIK SETIAP IKON</h2>
+              <p class="text-[#5b493e] mt-2">Setiap ikon menyimpan informasi tambahan.</p>
+              <button class="mt-4 rounded-full bg-[#651d26] px-4 py-2 font-bold text-white text-sm" onclick="openMaterialSection('latar')">COBA MATERI</button>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <span class="text-[#b78a48] font-bold">04</span><i data-lucide="calendar" class="text-[#9b2d38] mt-3"></i>
+              <h2 class="display-font text-xl font-bold text-[#4e171d] mt-3">TELUSURI TIMELINE</h2>
+              <p class="text-[#5b493e] mt-2">Ikuti perkembangan perang dari 1939–1945.</p>
+              <button class="mt-4 rounded-full bg-[#651d26] px-4 py-2 font-bold text-white text-sm" onclick="openMaterialSection('kronologi')">LIHAT TIMELINE</button>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <span class="text-[#b78a48] font-bold">05</span><i data-lucide="map" class="text-[#9b2d38] mt-3"></i>
+              <h2 class="display-font text-xl font-bold text-[#4e171d] mt-3">JELAJAHI PETA</h2>
+              <p class="text-[#5b493e] mt-2">Pelajari wilayah penting dalam Perang Dunia II.</p>
+              <button class="mt-4 rounded-full bg-[#651d26] px-4 py-2 font-bold text-white text-sm" onclick="openMaterialSection('wilayah')">LIHAT PETA</button>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <span class="text-[#b78a48] font-bold">06</span><i data-lucide="users" class="text-[#9b2d38] mt-3"></i>
+              <h2 class="display-font text-xl font-bold text-[#4e171d] mt-3">KENALI TOKOH</h2>
+              <p class="text-[#5b493e] mt-2">Kenali tokoh-tokoh penting dan perannya.</p>
+              <button class="mt-4 rounded-full bg-[#651d26] px-4 py-2 font-bold text-white text-sm" onclick="openMaterialSection('tokoh')">LIHAT TOKOH</button>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <span class="text-[#b78a48] font-bold">07</span><i data-lucide="trending-up" class="text-[#9b2d38] mt-3"></i>
+              <h2 class="display-font text-xl font-bold text-[#4e171d] mt-3">PELAJARI TITIK BALIK</h2>
+              <p class="text-[#5b493e] mt-2">Pahami peristiwa yang mengubah jalannya perang.</p>
+              <button class="mt-4 rounded-full bg-[#651d26] px-4 py-2 font-bold text-white text-sm" onclick="openMaterialSection('balik')">LIHAT TITIK BALIK</button>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <span class="text-[#b78a48] font-bold">08</span><i data-lucide="file-text" class="text-[#9b2d38] mt-3"></i>
+              <h2 class="display-font text-xl font-bold text-[#4e171d] mt-3">BACA SUMBER ILMIAH</h2>
+              <p class="text-[#5b493e] mt-2">Gunakan sumber ilmiah untuk memperdalam pemahaman.</p>
+              <button class="mt-4 rounded-full bg-[#651d26] px-4 py-2 font-bold text-white text-sm" onclick="openMaterialSection('latar')">BACA SUMBER</button>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <span class="text-[#b78a48] font-bold">09</span><i data-lucide="play-circle" class="text-[#9b2d38] mt-3"></i>
+              <h2 class="display-font text-xl font-bold text-[#4e171d] mt-3">TONTON VIDEO</h2>
+              <p class="text-[#5b493e] mt-2">Perkuat pemahaman melalui video pembelajaran.</p>
+              <a href="https://youtu.be/jUz7TlOIe2Y?si=f_g9V05ngyCanWX" target="_blank" rel="noopener noreferrer" class="inline-flex mt-4 rounded-full bg-[#651d26] px-4 py-2 font-bold text-white text-sm">PUTAR VIDEO</a>
+            </article>
+            <article class="paper-card rounded-2xl p-5">
+              <span class="text-[#b78a48] font-bold">10</span><i data-lucide="pen-tool" class="text-[#9b2d38] mt-3"></i>
+              <h2 class="display-font text-xl font-bold text-[#4e171d] mt-3">UJI PEMAHAMAN</h2>
+              <p class="text-[#5b493e] mt-2">Kerjakan kuis setelah mempelajari materi.</p>
+              <a href="https://quiz.zep.us/en/play/AGJw9Y" target="_blank" rel="noopener noreferrer" class="inline-flex mt-4 rounded-full bg-[#651d26] px-4 py-2 font-bold text-white text-sm">MULAI KUIS</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- REFERENSI -->
+      <section id="referensi" class="page-view py-14 sm:py-20 px-5">
+        <div class="w-full max-w-5xl mx-auto">
+          <p class="text-[#8e2732] font-bold tracking-[.18em] text-xs uppercase text-center">DAFTAR RUJUKAN</p>
+          <h1 class="display-font text-[#4e171d] text-4xl font-bold text-center mt-3">Referensi</h1>
+          <article class="paper-card rounded-2xl p-7 mt-8 text-[#493b35] leading-relaxed">
+            <h2 class="font-bold text-[#511820] text-xl">Buku dan Sumber Pembelajaran</h2>
+            <ol class="list-decimal pl-5 space-y-3 mt-4">
+              <li>Keegan, John. <em>The Second World War</em>. Penguin Books.</li>
+              <li>Overy, Richard. <em>The Origins of the Second World War</em>. Routledge.</li>
+              <li>Weinberg, Gerhard L. <em>A World at Arms: A Global History of World War II</em>. Cambridge University Press.</li>
+              <li>Triyanto, J. R. Mobilisasi bangsa Indonesia pada masa pendudukan Jepang untuk kepentingan Perang Asia Timur Raya tahun 1942–1945.</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <!-- KUIS -->
+      <section id="kuis" class="page-view py-16 sm:py-24 px-5">
+        <div class="max-w-4xl mx-auto rounded-[2rem] bg-[#4b1e24] text-[#fff9e9] text-center p-8 sm:p-16">
+          <i data-lucide="check-circle-2" class="mx-auto text-[#e6c777] w-12 h-12"></i>
+          <p class="text-[#e6c777] font-bold tracking-[.18em] text-xs uppercase mt-7">EVALUASI PEMBELAJARAN</p>
+          <h1 class="display-font font-bold mt-3 text-3xl sm:text-4xl text-[#fff9e9]">Uji Pemahamanmu</h1>
+          <p class="max-w-xl mx-auto text-lg text-[#f1dfbd] leading-relaxed mt-5">Setelah mempelajari materi, gunakan kuis untuk mengukur pemahamanmu tentang Perang Dunia II.</p>
+          <a href="https://quiz.zep.us/en/play/AGJw9Y" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-full bg-[#e0bc60] text-[#3e191c] px-7 py-4 font-bold mt-8 hover:bg-[#edd084] transition">MULAI KUIS</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-[#271416] px-5 py-8 text-[#eadfc9]">
+      <div class="w-full max-w-7xl mx-auto text-center text-sm">
+        <p class="font-semibold text-base">WARTRACE • BAHAN AJAR DIGITAL SEJARAH • PERANG DUNIA II</p>
+      </div>
+    </footer>
+
+    <!-- Audio Player Button -->
+    <button id="music-button" type="button" aria-pressed="false" class="fixed left-5 bottom-5 z-50 rounded-full bg-[#f8efdc] text-[#581c23] px-4 py-3 font-bold flex items-center gap-2 shadow-lg">
+      <span class="sound-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span id="music-label">PUTAR MUSIK</span>
+    </button>
+    <button id="back-to-top" type="button" class="fixed right-5 bottom-5 z-50 rounded-full bg-[#6b2029] text-white p-3 shadow-lg opacity-0 pointer-events-none transition" aria-label="Kembali ke atas">
+      <i data-lucide="arrow-up"></i>
+    </button>
+
+    <!-- Modal Pop-up -->
+    <div id="material-modal" class="modal-shell" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="rounded-3xl bg-[#f8f0df] p-7 sm:p-9 relative max-w-2xl w-full max-h-[85%] overflow-y-auto">
+        <button type="button" class="absolute right-4 top-4 p-2 text-[#691f28]" onclick="closeModal()" aria-label="Tutup penjelasan"><i data-lucide="x"></i></button>
+        <div id="modal-icon" class="text-[#9b2e39]"></div>
+        <p id="modal-eyebrow" class="text-[#9b2e39] font-bold tracking-[.15em] text-xs uppercase mt-3"></p>
+        <h2 id="modal-title" class="display-font text-[#4c171d] text-3xl sm:text-4xl font-bold mt-2"></h2>
+        <div id="modal-detail" class="text-[#59483e] leading-relaxed mt-5"></div>
+        <button type="button" class="mt-7 rounded-full bg-[#651d26] px-5 py-2 font-bold text-white hover:bg-[#7e242f] transition" onclick="closeModal()">Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const factors=[
+      ['Perjanjian Versailles','alert-triangle','Perjanjian Versailles 1919','Perjanjian Versailles mengakhiri Perang Dunia I, tetapi ketentuannya sangat berat bagi Jerman. Jerman dibatasi militernya, kehilangan wilayah dan koloni, serta diwajibkan membayar reparasi besar. Banyak warga Jerman memandang perjanjian ini sebagai penghinaan nasional. Adolf Hitler dan Partai Nazi memanfaatkan ketidakpuasan tersebut dengan menjanjikan pembatalan Versailles, pemulihan kekuatan militer, dan perluasan wilayah. Politik revisi Jerman kemudian menjadi salah satu pendorong utama perang.'],
+      ['Krisis Ekonomi','trending-down','Depresi Besar 1929','Depresi Besar yang dimulai pada 1929 menyebabkan pengangguran, kemiskinan, dan ketidakpastian sosial-politik di banyak negara. Di Jerman, krisis memperparah masalah ekonomi pascaperang. Dalam situasi tersebut, kelompok politik ekstrem memperoleh dukungan karena menawarkan jawaban cepat, nasionalisme, dan stabilitas. Krisis ekonomi membantu membuka jalan bagi pemerintahan otoriter, termasuk Nazi di Jerman.'],
+      ['Pemerintahan Fasis','shield-alert','Fasisme dan Nazisme','Fasisme Italia di bawah Benito Mussolini dan Nazisme Jerman di bawah Adolf Hitler menolak demokrasi liberal. Keduanya menekankan otoritarianisme, nasionalisme ekstrem, militerisme, propaganda, dan kepatuhan pada pemimpin. Nazisme juga mengembangkan rasisme serta antisemitisme. Ideologi tersebut mendorong kebijakan agresif dan memandang perang sebagai sarana membangun kejayaan negara.'],
+      ['Politik Ekspansi','maximize-2','Ekspansi negara Poros','Ketegangan meningkat melalui ekspansi bertahap: Jepang menduduki Manchuria pada 1931 dan memperluas perang di Tiongkok pada 1937; Italia menginvasi Ethiopia pada 1935; Jerman melakukan Anschluss dengan Austria pada 1938, menuntut Sudetenland, lalu memperluas kekuasaan ke wilayah Ceko. Rangkaian tindakan ini menunjukkan bahwa negara agresor semakin berani menantang tatanan internasional.'],
+      ['Kegagalan LBB','scale','Kelemahan keamanan kolektif','Liga Bangsa-Bangsa dibentuk untuk menjaga perdamaian melalui sistem keamanan kolektif. Namun, lembaga ini tidak memiliki kekuatan efektif untuk menegakkan keputusan. Liga gagal menghentikan Jepang di Manchuria, Italia di Ethiopia, dan ekspansi Jerman. Kegagalan tersebut melemahkan kepercayaan terhadap perdamaian internasional dan memberi ruang bagi negara agresor.'],
+      ['Kebijakan Appeasement','hand-metal','Konsesi yang gagal','Appeasement adalah kebijakan memberi konsesi kepada negara agresor agar perang dapat dihindari. Inggris dan Prancis menerapkannya karena trauma Perang Dunia I, keterbatasan kesiapan militer, dan harapan bahwa tuntutan Jerman dapat dibatasi. Dalam Perjanjian München 1938, Jerman memperoleh Sudetenland. Akan tetapi, pendudukan Ceko pada 1939 membuktikan bahwa Hitler tidak berhenti pada konsesi tersebut.']
+    ];
+    const countries=[
+      ['🇩🇪','Jerman','Blok Poros','Jerman bertujuan membatalkan Versailles, membangun kembali kekuatan militer, dan memperluas Lebensraum atau “ruang hidup”. Di bawah Hitler, Jerman menjadi penggerak utama perang di Eropa.'],
+      ['🇮🇹','Italia','Blok Poros','Italia Fasis di bawah Mussolini ingin memperluas pengaruhnya di Mediterania dan Afrika. Italia bersekutu dengan Jerman, tetapi mengalami banyak kelemahan militer dan beralih ke Sekutu pada 1943.'],
+      ['🇯🇵','Jepang','Blok Poros','Jepang mengejar dominasi di Asia Timur dan Asia-Pasifik untuk memperoleh sumber daya serta wilayah strategis. Serangan Pearl Harbor membawa Amerika Serikat ke dalam perang.'],
+      ['🇬🇧','Inggris','Blok Sekutu','Inggris melawan Jerman sejak 1939, bertahan dalam Pertempuran Britania, dan menjadi basis utama Sekutu di Eropa Barat.'],
+      ['🇫🇷','Prancis','Blok Sekutu','Prancis menyatakan perang terhadap Jerman pada 1939. Setelah jatuh pada 1940, perjuangan dilanjutkan oleh pasukan Prancis Bebas dan gerakan perlawanan.'],
+      ['🇷🇺','Uni Soviet','Blok Sekutu','Uni Soviet menjadi kekuatan penentu di Front Timur setelah diserang Jerman melalui Operasi Barbarossa pada 1941. Kemenangan Soviet di Stalingrad mengubah arah perang.'],
+      ['🇺🇸','Amerika Serikat','Blok Sekutu','Amerika Serikat masuk perang setelah Pearl Harbor. Kekuatan industri, ekonomi, dan militernya sangat menentukan kemenangan Sekutu di Eropa dan Pasifik.'],
+      ['🇨🇳','Tiongkok','Blok Sekutu','Tiongkok telah menghadapi agresi Jepang sejak 1937. Perlawanan Tiongkok mengikat banyak kekuatan Jepang di Asia Timur.'],
+      ['🌐','Sekutu lainnya','Blok Sekutu','Negara-negara Persemakmuran, Polandia, Belanda, Kanada, Australia, India Britania, dan banyak negara lain ikut berperan dalam perang global.']
+    ];
+    const years={
+      '1939':['1939 — Pecahnya Perang','Jerman menyerang Polandia pada 1 September 1939. Inggris dan Prancis menyatakan perang pada 3 September. Polandia kemudian dibagi oleh Jerman dan Uni Soviet sesuai kepentingan masing-masing. Perang di Eropa dimulai dan pada tahap awal terjadi masa “Phoney War” di Front Barat.'],
+      '1940':['1940 — Dominasi Jerman di Eropa Barat','Jerman menduduki Denmark dan Norwegia, kemudian menyerang Belanda, Belgia, dan Prancis. Evakuasi Dunkirk menyelamatkan banyak pasukan Sekutu, tetapi Prancis jatuh. Pertempuran Britania menjadi upaya Jerman menghancurkan pertahanan udara Inggris.'],
+      '1941':['1941 — Perang Meluas','Pada Juni, Jerman melancarkan Operasi Barbarossa dan menyerang Uni Soviet. Front Timur menjadi medan perang terbesar. Pada 7 Desember, Jepang menyerang Pearl Harbor. Amerika Serikat kemudian masuk perang, mengubah konflik menjadi perang skala global.'],
+      '1942':['1942 — Keseimbangan Mulai Berubah','Perang mencapai skala global. Di Pasifik, Amerika Serikat menang di Midway pada Juni. Di Afrika Utara, Sekutu menang di El Alamein. Di Front Timur, Pertempuran Stalingrad dimulai. Kemampuan ekspansi negara Poros mulai tertahan.'],
+      '1943':['1943 — Sekutu Mengambil Inisiatif','Pertempuran Stalingrad berakhir dengan kekalahan besar Jerman. Sekutu menang di Afrika Utara, menyerang Italia, dan Mussolini jatuh. Italia beralih ke pihak Sekutu. Sekutu semakin unggul dalam produksi industri dan sumber daya.'],
+      '1944':['1944 — Pembebasan Eropa Barat','Pada 6 Juni 1944, Sekutu mendarat di Normandia (D-Day). Pendaratan ini membuka front besar di Eropa Barat dan membebaskan Prancis. Sementara itu, Uni Soviet mendorong pasukan Jerman mundur dari Eropa Timur.'],
+      '1945':['1945 — Berakhirnya Perang','Sekutu memasuki wilayah Jerman dan Jerman menyerah pada Mei 1945. Bom atom dijatuhkan di Hiroshima pada 6 Agustus dan Nagasaki pada 9 Agustus. Jepang menyerah pada 15 Agustus dan menandatangani penyerahan resmi pada 2 September 1945.']
+    };
+    const people=[
+      ['Adolf Hitler','🇩🇪 Jerman','Führer Jerman Nazi','Memimpin kebijakan ekspansi, persenjataan kembali, dan perang agresif Jerman. Kepemimpinannya menjadi faktor utama pecahnya perang di Eropa serta kekerasan rasial Nazi.'],
+      ['Benito Mussolini','🇮🇹 Italia','Pemimpin Fasis Italia','Membangun pemerintahan fasis Italia dan membawa negaranya ke dalam Blok Poros. Kebijakan ekspansinya di Afrika turut melemahkan tatanan internasional.'],
+      ['Winston Churchill','🇬🇧 Inggris','Perdana Menteri Inggris','Memimpin Inggris menghadapi Jerman sejak 1940. Pidato dan kebijakannya memperkuat semangat perlawanan Inggris selama Pertempuran Britania.'],
+      ['Franklin D. Roosevelt','🇺🇸 AS','Presiden Amerika Serikat','Memimpin Amerika Serikat selama sebagian besar perang dan mengarahkan kapasitas industri raksasa Amerika untuk membantu Sekutu di Eropa dan Pasifik.'],
+      ['Joseph Stalin','🇷🇺 Uni Soviet','Pemimpin Uni Soviet','Memimpin Uni Soviet memukul mundur invasi Jerman di Front Timur. Peran Tentara Merah Soviet sangat menentukan dalam menghancurkan kekuatan utama Wehrmacht.'],
+      ['Hideki Tojo','🇯🇵 Jepang','Perdana Menteri Jepang','Tokoh militer dan politik Jepang pada awal perang Pasifik. Pemerintahannya mengarahkan ekspansi ke Asia Tenggara dan serangan ke Pearl Harbor.'],
+      ['Dwight D. Eisenhower','🇺🇸 AS','Panglima Sekutu di Eropa','Mengkoordinasikan operasi Sekutu di Mediterania dan memimpin langsung invasi amfibi terbesar dalam sejarah di Normandia pada Juni 1944.'],
+      ['Douglas MacArthur','🇺🇸 AS','Panglima Sekutu di Pasifik Barat Daya','Memimpin kampanye militer Sekutu melintasi Pasifik Barat Daya, merebut kembali Filipina, dan menerima penyerahan tanpa syarat Jepang pada September 1945.']
+    ];
+    const regions={
+      eropa:['Eropa','Perang di Eropa dimulai saat Jerman menyerang Polandia pada 1939. Jerman menguasai Eropa Barat sebelum menghadapi ketahanan gigih Inggris dalam Battle of Britain. Front Timur yang dibuka melalui Operasi Barbarossa (1941) menjadi palagan perang darat terbesar di dunia. Pendaratan Normandia (1944) dan desakan Tentara Merah Soviet dari timur akhirnya berujung pada jatuhnya Berlin dan kapitulasi Jerman pada Mei 1945.'],
+      afrika:['Afrika Utara','Afrika Utara adalah mandala tempur strategis demi menguasai Laut Mediterania, Terusan Suez, dan akses ke ladang minyak Timur Tengah. Pasukan Poros (termasuk Afrika Korps pimpinan Erwin Rommel) bertempur sengit melawan tentara Persemakmuran Inggris. Kemenangan Sekutu dalam Pertempuran El Alamein (1942) serta Operasi Torch melumpuhkan posisi Poros dan membuka pintu invasi Sekutu ke Italia.'],
+      asia:['Asia Timur','Jepang melancarkan imperialisme sejak pendudukan Manchuria (1931) dan meletusnya Perang Tiongkok-Jepang Kedua (1937). Wilayah Tiongkok menjadi medan pertempuran panjang berdarah yang mengikat jutaan serdadu Jepang. Kebutuhan akan pasokan minyak, karet, dan sumber daya alam industri menjadi katalis utama bagi Jepang untuk melancarkan ekspansi militernya ke Asia Tenggara.'],
+      pasifik:['Asia-Pasifik','Bermula dari serangan dadakan armada udara Jepang ke Pearl Harbor pada 7 Desember 1941. Pasukan Jepang bergerak kilat menduduki Asia Tenggara (termasuk Kepulauan Hindia Belanda) dan pulau-pulau strategis Pasifik. Titik balik terjadi saat Amerika Serikat memenangkan Pertempuran Laut Midway (1942), disusul strategi lompat pulau (island hopping) hingga penjatuhan bom atom di Hiroshima dan Nagasaki pada Agustus 1945.']
+    };
+    const turns=[
+      ['Pertempuran Stalingrad','1942–1943','Jerman melawan Uni Soviet','Jerman berusaha menguasai Stalingrad, tetapi terjebak dalam pertempuran kota yang sengit dan pengepungan Soviet. Pasukan Angkatan Darat ke-6 Jerman menyerah pada Februari 1943. Stalingrad menjadi titik balik terbesar di Eropa yang mematahkan inisiatif serangan Jerman di Front Timur.','shield'],
+      ['Pertempuran Midway','Juni 1942','Jepang melawan Amerika Serikat','Setelah Pearl Harbor, Jepang bermaksud menghabisi sisa armada kapal induk AS di Midway. Berkat intelijen pemecah kode, AL Amerika berhasil menenggelamkan empat kapal induk armada utama Jepang. Midway mematahkan superioritas AL Jepang di Samudra Pasifik.','anchor'],
+      ['Kampanye Afrika Utara','1940–1943','Poros melawan Sekutu','Pertempuran untuk mengamankan Terusan Suez dan Mediterania. Kemenangan Jenderal Montgomery di El Alamein serta Operasi Torch memaksa ratusan ribu pasukan Poros menyerah di Tunisia pada Mei 1943, membuka jalan bagi Sekutu melompat ke Sisilia dan daratan Italia.','sun']
+    ];
+    const impacts=[
+      ['Dampak Kemanusiaan','users','Perang menewaskan lebih dari 60 juta jiwa, memicu jutaan pengungsi, serta kehancuran total di puluhan kota besar. Kejahatan genosida Holocaust oleh rezim Nazi memperlihatkan tragedi kemanusiaan paling kelam dalam sejarah modern.'],
+      ['Dampak Politik','landmark','Runtuhnya hegemoni kekuatan lama imperialis Eropa Barat. Dua kekuatan adidaya baru dengan ideologi berlawanan muncul ke panggung dunia: Amerika Serikat (kapitalis-demokratis) dan Uni Soviet (komunis).'],
+      ['Dampak Ekonomi','building-2','Sektor industri, infrastruktur transportasi, dan lahan pertanian di Eropa serta Asia hancur lebur. Rekonstruksi besar-besaran dilakukan, termasuk melalui Marshall Plan yang didanai Amerika Serikat.'],
+      ['Pembentukan PBB','globe','Perserikatan Bangsa-Bangsa (PBB) didirikan pada Oktober 1945 di San Francisco untuk menggantikan kegagalan LBB, dengan misi mencegah pecahnya perang dunia berikutnya melalui Dewan Keamanan.'],
+      ['Awal Perang Dingin','swords','Kerjasama darurat antara AS dan Uni Soviet seketika bubar pascaperang, berganti menjadi polarisasi persaingan geopolitik, perlombaan senjata nuklir, dan blok ideologi Barat vs Timur.'],
+      ['Dekolonisasi','flag','Melemahnya kedudukan negara penjajah Eropa pascaperang mempercepat runtuhnya kolonialisme global. Gelombang dekolonisasi melanda Asia dan Afrika, mempercepat momentum kemerdekaan Indonesia.']
+    ];
+
+    function card(title,icon,subtitle,detail){
+      return `<button type="button" class="paper-card hover-card rounded-2xl p-6 text-left border" onclick='openModal(${JSON.stringify(subtitle)},${JSON.stringify(title)},${JSON.stringify(detail)},${JSON.stringify(icon)})'>
+        <i data-lucide="${icon}" class="text-[#9b2d38]"></i>
+        <h3 class="display-font text-xl font-bold mt-4 text-[#4e171d]">${title}</h3>
+        <p class="text-[#5b493e] mt-2 text-sm">${subtitle}</p>
+        <span class="inline-block mt-4 font-bold text-[#b78a48] text-sm">Lihat Penjelasan →</span>
+      </button>`;
+    }
+
+    function renderContent(){
+      document.getElementById('factor-grid').innerHTML=factors.map(x=>card(x[0],x[1],x[2],x[3])).join('');
+      document.getElementById('axis-grid').innerHTML=countries.slice(0,3).map(x=>`<button type="button" class="rounded-xl border border-[#b88c4b]/60 p-3 text-left hover:bg-white/10" onclick='openModal(${JSON.stringify(x[2])},${JSON.stringify(x[1])},${JSON.stringify(x[3])},"flag")'><span class="text-2xl">${x[0]}</span><span class="block font-bold mt-2 text-sm">${x[1]}</span></button>`).join('');
+      document.getElementById('allies-grid').innerHTML=countries.slice(3).map(x=>`<button type="button" class="rounded-xl border border-[#c9af7b] bg-[#fff8e8]/60 p-3 text-left hover:bg-white" onclick='openModal(${JSON.stringify(x[2])},${JSON.stringify(x[1])},${JSON.stringify(x[3])},"flag")'><span class="text-2xl">${x[0]}</span><span class="block font-bold mt-2 text-[#4e171d] text-sm">${x[1]}</span></button>`).join('');
+      document.getElementById('year-buttons').innerHTML=Object.keys(years).map(y=>`<button type="button" class="timeline-year rounded-full px-5 py-2 font-bold" data-year="${y}" onclick="selectYear('${y}')">${y}</button>`).join('');
+      document.getElementById('people-grid').innerHTML=people.map((x,i)=>`<button type="button" class="paper-card hover-card rounded-2xl p-5 text-left" onclick='openModal(${JSON.stringify(x[1])},${JSON.stringify(x[0])},${JSON.stringify('<strong>Peran:</strong> '+x[2]+'<br><br>'+x[3])},"user")'><span class="text-[#b78a48] font-bold">0${i+1}</span><h3 class="display-font text-xl font-bold text-[#4e171d] mt-3">${x[0]}</h3><p class="text-[#8e2732] font-semibold mt-1">${x[1]}</p></button>`).join('');
+      document.getElementById('turning-grid').innerHTML=turns.map(x=>card(x[0],x[4],x[1]+' • '+x[2],x[3])).join('');
+      document.getElementById('impact-grid').innerHTML=impacts.map(x=>card(x[0],x[1],'Klik untuk membaca dampaknya',x[2])).join('');
+      selectYear('1939'); 
+      showRegion('eropa');
+      lucide.createIcons();
+    }
+
+    function selectYear(year){
+      const item=years[year];
+      document.getElementById('timeline-detail').innerHTML=`<p class="font-bold tracking-[.15em] text-xs text-[#9b2d38]">${year}</p><h3 class="display-font text-3xl font-bold text-[#4e171d] mt-2">${item[0]}</h3><p class="text-[#59483f] leading-relaxed mt-4">${item[1]}</p><button type="button" class="mt-5 rounded-full bg-[#651d26] px-5 py-2 font-bold text-white hover:bg-[#7e242f] transition" onclick='openModal(${JSON.stringify(year)},${JSON.stringify(item[0])},${JSON.stringify(item[1])},"route")'>Baca Selengkapnya</button>`;
+      document.querySelectorAll('[data-year]').forEach(btn=>btn.classList.toggle('active',btn.dataset.year===year));
+    }
+
+    let selectedRegion='eropa';
+    function showRegion(key){
+      selectedRegion=key;
+      document.getElementById('region-title').textContent=regions[key][0];
+      document.getElementById('region-text').textContent=regions[key][1];
+    }
+    function openRegionModal(){
+      const r=regions[selectedRegion];
+      openModal('Perang di Berbagai Wilayah',r[0],r[1],'map-pin');
+    }
+
+    function openIndonesia(){
+      openModal('Keterkaitan dengan Indonesia','Pendudukan Jepang dan Jalan Menuju Proklamasi','Jepang menduduki Indonesia sejak Maret 1942 setelah mengalahkan pemerintah Hindia Belanda. Pendudukan militer Jepang memobilisasi rakyat dan sumber daya demi perang, membentuk organisasi kemiliteran seperti PETA dan Heiho yang kemudian memberikan bekal kepemimpinan serta militer bagi pemuda bumiputra. Ketika bom atom meruntuhkan kekuatan Jepang pada Agustus 1945 hingga menyerah tanpa syarat, tercipta "vacuum of power" (kekosongan kekuasaan). Momentum genting ini dimanfaatkan para tokoh bangsa untuk memproklamasikan Kemerdekaan Indonesia pada 17 Agustus 1945.','flag');
+    }
+
+    function openModal(eyebrow,title,detail,icon){
+      document.getElementById('modal-eyebrow').textContent=eyebrow;
+      document.getElementById('modal-title').textContent=title;
+      document.getElementById('modal-detail').innerHTML=detail;
+      document.getElementById('modal-icon').innerHTML=`<i data-lucide="${icon}"></i>`;
+      document.getElementById('material-modal').classList.add('open');
+      lucide.createIcons();
+    }
+    function closeModal(){
+      document.getElementById('material-modal').classList.remove('open');
+    }
+    document.getElementById('material-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+
+    function showPage(page){
+      document.querySelectorAll('.page-view').forEach(x=>x.classList.remove('active'));
+      document.getElementById(page).classList.add('active');
+      document.querySelectorAll('[data-page-link]').forEach(x=>x.classList.toggle('active',x.dataset.pageLink===page));
+      window.scrollTo({top:0,behavior:'smooth'});
+      lucide.createIcons();
+    }
+    function scrollToSection(id){
+      document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    function openMaterialSection(id){
+      showPage('materi');
+      setTimeout(()=>scrollToSection(id),150);
+    }
+    function closeMobileMenu(){
+      document.getElementById('mobile-menu').classList.add('hidden');
+      document.getElementById('menu-toggle').setAttribute('aria-expanded','false');
+    }
+    document.getElementById('menu-toggle').addEventListener('click',function(){
+      const m=document.getElementById('mobile-menu');
+      m.classList.toggle('hidden');
+      this.setAttribute('aria-expanded',String(!m.classList.contains('hidden')));
+    });
+
+    const topButton=document.getElementById('back-to-top');
+    window.addEventListener('scroll',()=>{
+      const hidden=window.scrollY<400;
+      topButton.classList.toggle('opacity-0',hidden);
+      topButton.classList.toggle('pointer-events-none',hidden);
+    });
+    topButton.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+    // Audio Synthesizer
+    let musicContext,musicTimer,musicStep=0;
+    const melody=[392,440,494,523,587,523,494,440];
+    function playNote(){
+      const now=musicContext.currentTime,o=musicContext.createOscillator(),g=musicContext.createGain();
+      o.type='triangle';
+      o.frequency.value=melody[musicStep++%melody.length];
+      g.gain.setValueAtTime(.0001,now);
+      g.gain.exponentialRampToValueAtTime(.06,now+.03);
+      g.gain.exponentialRampToValueAtTime(.0001,now+.3);
+      o.connect(g);
+      g.connect(musicContext.destination);
+      o.start(now);
+      o.stop(now+.32);
+    }
+    document.getElementById('music-button').addEventListener('click',async function(){
+      const label=document.getElementById('music-label');
+      if(musicTimer){
+        clearInterval(musicTimer);
+        musicTimer=null;
+        this.classList.remove('is-playing');
+        this.setAttribute('aria-pressed','false');
+        label.textContent='PUTAR MUSIK';
+        return;
+      }
+      const Context=window.AudioContext||window.webkitAudioContext;
+      if(!Context){
+        label.textContent='AUDIO TIDAK TERSEDIA';
+        return;
+      }
+      musicContext=musicContext||new Context();
+      if(musicContext.state==='suspended')await musicContext.resume();
+      playNote();
+      musicTimer=setInterval(playNote,370);
+      this.classList.add('is-playing');
+      this.setAttribute('aria-pressed','true');
+      label.textContent='HENTIKAN MUSIK';
+    });
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      renderContent();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
