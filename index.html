@@ -1,5 +1,4 @@
 <!doctype html>
-<!doctype html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -32,15 +31,15 @@
     /* Styling Peta Bergambar & Tombol Pin */
     .map-board-wrapper{position:relative;overflow:hidden;border:2px solid #9b7542;border-radius:1.5rem;box-shadow:0 12px 28px rgba(0,0,0,.25);background:#2c181a}
     .map-board-img{width:100%;height:auto;display:block;user-select:none;-webkit-user-drag:none}
-    .map-button{position:absolute;z-index:10;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:5px;border:1.5px solid rgba(255,239,198,.8);background:rgba(96,35,43,.92);color:#fff7e7;border-radius:999px;padding:.4rem .75rem;font-weight:700;font-size:.78rem;box-shadow:0 4px 12px rgba(0,0,0,.35);backdrop-filter:blur(3px);cursor:pointer;transition:.2s ease;white-space:nowrap}
-    .map-button:hover{background:#d3aa56;color:#35191a;transform:translate(-50%,-50%) scale(1.08);box-shadow:0 0 14px rgba(211,170,86,.7)}
+    .map-button{position:absolute;z-index:10;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:5px;border:1.5px solid rgba(255,239,198,.85);background:rgba(96,35,43,.92);color:#fff7e7;border-radius:999px;padding:.38rem .7rem;font-weight:700;font-size:.76rem;box-shadow:0 4px 12px rgba(0,0,0,.4);backdrop-filter:blur(3px);cursor:pointer;transition:.2s ease;white-space:nowrap}
+    .map-button:hover{background:#d3aa56;color:#35191a;transform:translate(-50%,-50%) scale(1.08);box-shadow:0 0 14px rgba(211,170,86,.8)}
     
     .sound-bars{display:inline-flex;gap:2px;align-items:flex-end;height:16px}.sound-bars span{width:3px;height:5px;border-radius:3px;background:currentColor}
     .is-playing .sound-bars span:nth-child(1){animation:bar .5s infinite alternate}.is-playing .sound-bars span:nth-child(2){animation:bar .35s .12s infinite alternate}.is-playing .sound-bars span:nth-child(3){animation:bar .6s .08s infinite alternate}
     button:focus-visible,a:focus-visible{outline:3px solid #e3bb61;outline-offset:3px}
     @keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
     @keyframes bar{to{height:16px}}
-    @media(max-width:767px){.desktop-nav{display:none}.material-nav{top:64px}.map-button{font-size:.68rem;padding:.3rem .55rem}}
+    @media(max-width:767px){.desktop-nav{display:none}.material-nav{top:64px}.map-button{font-size:.66rem;padding:.28rem .5rem}}
     @media(min-width:768px){.mobile-toggle,.mobile-menu{display:none}}
   </style>
   <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
@@ -50,9 +49,17 @@
   <div class="app-wrapper">
     <header class="sticky top-0 z-40 border-b border-[#8d6d4d] bg-[#2b1517]/95 text-[#fff8e8] backdrop-blur">
       <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-        <button type="button" class="flex items-center text-xl font-bold tracking-wider text-[#e6c67d] display-font" onclick="showPage('beranda')" aria-label="Kembali ke beranda">
-          WARTRACE
+        <!-- Logo Universitas Negeri Malang PNG di Kiri Atas -->
+        <button type="button" class="flex items-center bg-white rounded-lg px-2.5 py-1 hover:bg-white/90 transition shadow-sm" onclick="showPage('beranda')" aria-label="Kembali ke beranda">
+          <img 
+            src="logo-um.png" 
+            alt="Logo Universitas Negeri Malang" 
+            class="h-9 w-auto max-w-[155px] object-contain"
+            onerror="this.style.display='none'; document.getElementById('brand-fallback').style.display='block';"
+          />
+          <span id="brand-fallback" class="hidden text-base font-bold text-[#4e171d] display-font">WARTRACE</span>
         </button>
+
         <nav class="desktop-nav" aria-label="Navigasi utama">
           <div class="flex gap-6 text-sm font-bold tracking-wide">
             <button class="nav-link active text-[#fff8e8]" data-page-link="beranda" type="button" onclick="showPage('beranda')">BERANDA</button>
@@ -208,44 +215,48 @@
             <div id="people-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-7"></div>
           </section>
 
-          <!-- WILAYAH KONFLIK (PETA BERGAMBAR) -->
+          <!-- WILAYAH KONFLIK (PETA EROPA 1939) -->
           <section id="wilayah" class="pt-20">
             <p class="text-[#8d2933] font-bold tracking-[.16em] text-xs uppercase">06 — WILAYAH KONFLIK</p>
-            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Perang di berbagai wilayah dunia</h2>
-            <p class="text-[#59483f] mt-3">Peta interaktif teater perang dunia. Klik pin wilayah pada peta untuk membaca perkembangan perang di setiap teater operasi.</p>
+            <h2 class="display-font text-[#4e171d] font-bold mt-2 text-2xl">Peta Kawasan Eropa Menjelang Perang Dunia II (1939)</h2>
+            <p class="text-[#59483f] mt-3">Peta teater Eropa tahun 1939. Klik pin wilayah pada peta untuk membaca peranan strategis masing-masing front dan kawasan.</p>
             
             <div class="grid lg:grid-cols-[1.3fr_.7fr] gap-6 mt-7 items-start">
               <!-- Kotak Peta Gambar Interaktif -->
               <div class="map-board-wrapper">
                 <img 
-                  src="peta-ww2.jpg" 
-                  alt="Peta Teater Perang Dunia II Vintage" 
+                  src="ww2-map.jpg" 
+                  alt="Peta Eropa Menjelang Perang Dunia II 1939" 
                   class="map-board-img"
                   onerror="this.onerror=null; this.src='https://images.pexels.com/photos/14436283/pexels-photo-14436283.jpeg';"
                 />
 
-                <!-- Tombol Pin Koordinat Wilayah -->
-                <button class="map-button" style="left: 47%; top: 27%;" type="button" onclick="showRegion('eropa')">
-                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Eropa
+                <!-- Tombol Pin Koordinat Wilayah yang disesuaikan dengan peta Eropa 1939 -->
+                <!-- 1. Jerman & Eropa Tengah -->
+                <button class="map-button" style="left: 45%; top: 40%;" type="button" onclick="showRegion('eropa')">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Jerman &amp; Eropa Tengah
                 </button>
 
-                <button class="map-button" style="left: 49%; top: 43%;" type="button" onclick="showRegion('afrika')">
-                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Afrika Utara
+                <!-- 2. Sekutu Barat (Inggris & Prancis) -->
+                <button class="map-button" style="left: 26%; top: 48%;" type="button" onclick="showRegion('sekutu-barat')">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Sekutu Barat
                 </button>
 
-                <button class="map-button" style="left: 77%; top: 37%;" type="button" onclick="showRegion('asia')">
-                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Asia Timur
+                <!-- 3. Front Timur (Uni Soviet) -->
+                <button class="map-button" style="left: 72%; top: 38%;" type="button" onclick="showRegion('soviet')">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Front Timur (Soviet)
                 </button>
 
-                <button class="map-button" style="left: 86%; top: 47%;" type="button" onclick="showRegion('pasifik')">
-                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Asia-Pasifik
+                <!-- 4. Mediterania & Afrika Utara -->
+                <button class="map-button" style="left: 46%; top: 88%;" type="button" onclick="showRegion('afrika')">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Afrika Utara &amp; Mediterania
                 </button>
               </div>
 
               <!-- Sidebar Detail Wilayah -->
               <aside class="paper-card rounded-3xl p-7 sticky top-24">
                 <p class="text-[#9a2f39] font-bold tracking-[.15em] text-xs uppercase">Wilayah Terpilih</p>
-                <h3 id="region-title" class="display-font text-3xl text-[#4c171d] font-bold mt-2">Eropa</h3>
+                <h3 id="region-title" class="display-font text-3xl text-[#4c171d] font-bold mt-2">Jerman &amp; Eropa Tengah</h3>
                 <p id="region-text" class="text-[#59483f] leading-relaxed mt-4"></p>
                 <button type="button" class="mt-5 rounded-full bg-[#651d26] px-5 py-2 font-bold text-white hover:bg-[#7e242f] transition" onclick="openRegionModal()">Baca Selengkapnya</button>
               </aside>
@@ -289,7 +300,7 @@
           <!-- KETERKAITAN DENGAN INDONESIA -->
           <section id="indonesia" class="pt-20">
             <div class="rounded-3xl overflow-hidden bg-[#4b1e24] text-[#fff8e8] grid md:grid-cols-[.82fr_1.18fr]">
-              <img class="min-h-[280px] h-full w-full object-cover opacity-80" loading="lazy" src="https://images.pexels.com/photos/712418/pexels-photo-712418.jpeg" alt="Ilustrasi arsip bersejarah">
+              <img class="min-h-[280px] h-full w-full object-cover object-top" loading="lazy" src="soekarno.jpg" alt="Foto Pembacaan Teks Proklamasi Kemerdekaan oleh Ir. Soekarno">
               <div class="p-8 sm:p-10">
                 <p class="text-[#e6c774] font-bold tracking-[.16em] text-xs uppercase">10 — KETERKAITAN DENGAN INDONESIA</p>
                 <h2 class="display-font font-bold mt-3 text-2xl text-[#fff8e8]">Dari Pendudukan Jepang menuju Proklamasi</h2>
@@ -474,7 +485,7 @@
       ['Pemerintahan Fasis','shield-alert','Fasisme dan Nazisme','Fasisme Italia di bawah Benito Mussolini dan Nazisme Jerman di bawah Adolf Hitler menolak demokrasi liberal. Keduanya menekankan otoritarianisme, nasionalisme ekstrem, militerisme, propaganda, dan kepatuhan pada pemimpin. Nazisme juga mengembangkan rasisme serta antisemitisme. Ideologi tersebut mendorong kebijakan agresif dan memandang perang sebagai sarana membangun kejayaan negara.'],
       ['Politik Ekspansi','maximize-2','Ekspansi negara Poros','Ketegangan meningkat melalui ekspansi bertahap: Jepang menduduki Manchuria pada 1931 dan memperluas perang di Tiongkok pada 1937; Italia menginvasi Ethiopia pada 1935; Jerman melakukan Anschluss dengan Austria pada 1938, menuntut Sudetenland, lalu memperluas kekuasaan ke wilayah Ceko. Rangkaian tindakan ini menunjukkan bahwa negara agresor semakin berani menantang tatanan internasional.'],
       ['Kegagalan LBB','scale','Kelemahan keamanan kolektif','Liga Bangsa-Bangsa dibentuk untuk menjaga perdamaian melalui sistem keamanan kolektif. Namun, lembaga ini tidak memiliki kekuatan efektif untuk menegakkan keputusan. Liga gagal menghentikan Jepang di Manchuria, Italia di Ethiopia, dan ekspansi Jerman. Kegagalan tersebut melemahkan kepercayaan terhadap perdamaian internasional dan memberi ruang bagi negara agresor.'],
-      ['Kebijakan Appeasement','hand-metal','Konsesi yang gagal','Appeasement adalah kebijakan memberi konsesi kepada negara agresor agar perang dapat dihindari. Inggris dan Prancis menerapkannya karena trauma Perang Dunia I, keterbatasan kesiapan militer, dan harapan bahwa tuntutan Jerman dapat dibatasi. Dalam Perjanjian München 1938, Jerman memperoleh Sudetenland. Akan tetapi, pendudukan Ceko pada 1939 membuktikan bahwa Hitler tidak berhenti pada konsesi tersebut.']
+      ['Kebijakan Appeasement','handshake','Konsesi yang gagal','Appeasement adalah kebijakan memberi konsesi kepada negara agresor agar perang dapat dihindari. Inggris dan Prancis menerapkannya karena trauma Perang Dunia I, keterbatasan kesiapan militer, dan harapan bahwa tuntutan Jerman dapat dibatasi. Dalam Perjanjian München 1938, Jerman memperoleh Sudetenland. Akan tetapi, pendudukan Ceko pada 1939 membuktikan bahwa Hitler tidak berhenti pada konsesi tersebut.']
     ];
     const countries=[
       ['🇩🇪','Jerman','Blok Poros','Jerman bertujuan membatalkan Versailles, membangun kembali kekuatan militer, dan memperluas Lebensraum atau “ruang hidup”. Di bawah Hitler, Jerman menjadi penggerak utama perang di Eropa.'],
@@ -506,12 +517,15 @@
       ['Dwight D. Eisenhower','🇺🇸 AS','Panglima Sekutu di Eropa','Mengkoordinasikan operasi Sekutu di Mediterania dan memimpin langsung invasi amfibi terbesar dalam sejarah di Normandia pada Juni 1944.'],
       ['Douglas MacArthur','🇺🇸 AS','Panglima Sekutu di Pasifik Barat Daya','Memimpin kampanye militer Sekutu melintasi Pasifik Barat Daya, merebut kembali Filipina, dan menerima penyerahan tanpa syarat Jepang pada September 1945.']
     ];
+    
+    // Penyesuaian Data Wilayah Khusus Kawasan Teater Eropa 1939
     const regions={
-      eropa:['Eropa','Perang di Eropa dimulai saat Jerman menyerang Polandia pada 1939. Jerman menguasai Eropa Barat sebelum menghadapi ketahanan gigih Inggris dalam Battle of Britain. Front Timur yang dibuka melalui Operasi Barbarossa (1941) menjadi palagan perang darat terbesar di dunia. Pendaratan Normandia (1944) dan desakan Tentara Merah Soviet dari timur akhirnya berujung pada jatuhnya Berlin dan kapitulasi Jerman pada Mei 1945.'],
-      afrika:['Afrika Utara','Afrika Utara adalah mandala tempur strategis demi menguasai Laut Mediterania, Terusan Suez, dan akses ke ladang minyak Timur Tengah. Pasukan Poros (termasuk Afrika Korps pimpinan Erwin Rommel) bertempur sengit melawan tentara Persemakmuran Inggris. Kemenangan Sekutu dalam Pertempuran El Alamein (1942) serta Operasi Torch melumpuhkan posisi Poros dan membuka pintu invasi Sekutu ke Italia.'],
-      asia:['Asia Timur','Jepang melancarkan imperialisme sejak pendudukan Manchuria (1931) dan meletusnya Perang Tiongkok-Jepang Kedua (1937). Wilayah Tiongkok menjadi medan pertempuran panjang berdarah yang mengikat jutaan serdadu Jepang. Kebutuhan akan pasokan minyak, karet, dan sumber daya alam industri menjadi katalis utama bagi Jepang untuk melancarkan ekspansi militernya ke Asia Tenggara.'],
-      pasifik:['Asia-Pasifik','Bermula dari serangan dadakan armada udara Jepang ke Pearl Harbor pada 7 Desember 1941. Pasukan Jepang bergerak kilat menduduki Asia Tenggara (termasuk Kepulauan Hindia Belanda) dan pulau-pulau strategis Pasifik. Titik balik terjadi saat Amerika Serikat memenangkan Pertempuran Laut Midway (1942), disusul strategi lompat pulau (island hopping) hingga penjatuhan bom atom di Hiroshima dan Nagasaki pada Agustus 1945.']
+      eropa:['Jerman & Eropa Tengah','Jerman di bawah Hitler menjalankan serangkaian aneksasi militer sebelum September 1939: remiliterisasi Rhineland (1936), Anschluss Austria (1938), pencaplokan Sudetenland, dan pembubaran Cekoslowakia (Maret 1939). Puncaknya, invasi militer Jerman ke Polandia pada 1 September 1939 memicu deklarasi perang dari Sekutu dan menjadi pemicu utama meletusnya Perang Dunia II di Eropa.'],
+      'sekutu-barat':['Sekutu Barat (Inggris & Prancis)','Inggris Raya dan Prancis merespons invasi Jerman ke Polandia dengan menyatakan perang pada 3 September 1939. Garis pertahanan Maginot Line di Prancis dan armada Angkatan Laut Kerajaan Inggris di Selat Inggris menjadi benteng utama dalam membendung ekspansi Jerman sebelum meletusnya pertempuran besar tahun 1940.'],
+      soviet:['Front Timur (Uni Soviet)','Pada Agustus 1939, Jerman dan Uni Soviet menandatangani Pakta Molotov-Ribbentrop yang membagi lingkup pengaruh di Eropa Timur. Setelah invasi Jerman ke Polandia barat, Uni Soviet menduduki wilayah timur Polandia dan negara-negara Baltik. Wilayah luas ini kemudian menjadi palagan perang darat terbesar dunia saat Jerman mengkhianati pakta tersebut melalui Operasi Barbarossa pada Juni 1941.'],
+      afrika:['Afrika Utara & Mediterania','Kawasan Laut Mediterania dan pesisir Afrika Utara menghubungkan Eropa dengan Terusan Suez serta jalur logistik penting ke Timur Tengah. Italia di bawah Mussolini mengincar hegemoni di kawasan ini, yang kemudian menjadi medan pertempuran sengit antara pasukan Poros (Afrika Korps) dan tentara Sekutu hingga tahun 1943.']
     };
+    
     const turns=[
       ['Pertempuran Stalingrad','1942–1943','Jerman melawan Uni Soviet','Jerman berusaha menguasai Stalingrad, tetapi terjebak dalam pertempuran kota yang sengit dan pengepungan Soviet. Pasukan Angkatan Darat ke-6 Jerman menyerah pada Februari 1943. Stalingrad menjadi titik balik terbesar di Eropa yang mematahkan inisiatif serangan Jerman di Front Timur.','shield'],
       ['Pertempuran Midway','Juni 1942','Jepang melawan Amerika Serikat','Setelah Pearl Harbor, Jepang bermaksud menghabisi sisa armada kapal induk AS di Midway. Berkat intelijen pemecah kode, AL Amerika berhasil menenggelamkan empat kapal induk armada utama Jepang. Midway mematahkan superioritas AL Jepang di Samudra Pasifik.','anchor'],
